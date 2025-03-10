@@ -7,7 +7,10 @@ import os
 # Log in to the Hugging Face Hub
 load_dotenv()
 huggingface_login = os.getenv("HUGGINGFACE_LOGIN")
-login(token=huggingface_login)
+if huggingface_login is None:
+    raise ValueError("Please set the environment variable HUGGINGFACE_LOGIN")
+
+login(token=huggingface_login, add_to_git_credential=True)
 
 # Load the model and tokenizer
 checkpoint = "meta-llama/Llama-3.2-1B-Instruct"
