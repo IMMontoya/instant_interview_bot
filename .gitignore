@@ -1,0 +1,10 @@
+.venv
+.env
+
+# Any notebooks
+*.ipynb
+
+notes.md
+
+*.txt
+*.csv
