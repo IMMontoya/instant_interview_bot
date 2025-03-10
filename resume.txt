@@ -1,0 +1,87 @@
+Isaiah Montoya
+Data and Python Development
+
+Certified Data Scientist and Developer with 3+ years experience in providing business insights and process improvements. Skilled at making enterprise data meaningful to key stakeholders with a proven track record creating novel solutions and boosting productivity. Demonstrated exceptional leadership and communication abilities, leveraging emotional intelligence to build strong relationships, foster collaboration, and drive results-driven teams forward.
+
+SKILLS
+Python (Pandas, Numpy, Matplotlib, Seaborn) • Excel (with VBA) • Data Analysis (preprosing, exploratory, statistical) • Data Visualization (Tableau, PowerBI) • SQL (mySQL, postgre) • ETL Processes • Machine Learning (supervised learning, ML for text, computer vision, unsupervised learning) • APIs • GitHub • Jupyter Notebooks • Automation & Algorithms • Artificial Intelligence • Prompt Engineering • Ollama
+
+EXPERIENCE
+Xai • Audio Editor Intelligence Analyst • 1/2025 - Current
+Processed and structured raw audio data by cleaning to enhance data quality and consistency.
+Applied advanced signal processing techniques to optimize data integrity.
+Followed standardized workflows and data formatting conventions to ensure accurate data processing and compliance with project specifications.
+
+Kippy AI • Data Science Intern • 10/2024 - 1/2025
+Developed custom functions in Python to transform 19 GB of json event data into a relational data model.
+Uncovered key insights into customer data, including most common countries of use, most common learning languages, customer types based on subscription behavior, subscription duration, and time to subscription.
+Studied the effect of daily limits on subscription conversion using statistical methods to confirm a hypothesis. 
+Provided a thorough slide-deck presentation with informative visualizations to the business owner. 
+
+StrataTech Education Group • Marketing Data Specialist • Phoenix, AZ • 05/2022 - 12/2023
+Responsible for processing of all marketing related invoices, account reconciliation, and financial reporting.
+Collaborated cross-functionally with database administrators to create the infrastructure needed during a data migration process,  including an algorithm that successfully categorized the status of over 100,000 records.
+Designed and led the implementation of a budgeting software tool (using Excel and VBA) for the marketing department that organized over a million dollars in monthly spend and automated reporting.
+Developed four unique dashboards using Power BI and Salesforce Intelligence, plus regular and ad hoc reporting.
+Audited existing data flows, discovered errors that were costing thousands of dollars on a monthly basis.
+Consistently received “exceeds expectations” in semi-annual performance reviews while working remotely.
+
+Art Solutions • Accounts Receivable Manager • Scottsdale, AZ • 07/2021 - 05/2022
+Processed all accounts receivable invoices for the organization, conducted monthly account reconciliation.
+Created and implemented a custom billing tool using Google Sheets to calculate monthly prorated storage costs, cutting time cost in half, and still in use today.
+Collaborated with other departments to transition from an analog-based storage tracking system to a digital system, resulting in major time savings and a more traceable, modernized process.
+
+Starbucks • Barista • Mesa, AZ • 08/2020 - 07/2021
+Processed high-volume financial transactions with 100% accuracy while maintaining compliance with cash handling procedures.
+Adapted quickly to changing priorities during peak hours while ensuring quality service standards.
+Collaborated with team members to identify and resolve potential security and compliance issues.
+
+DocuPet • Fulfillment Officer • Syracuse, NY • 12/2019 - 03/2020
+Oversaw inventory management and logistics, ensuring timely processing and shipment of all U.S. customer orders.
+Registered customer-specific data for pet tags and state-compliant registrations, integrating records into tracking systems.
+Maintained and updated spreadsheets to monitor delivery statuses and inventory levels with high accuracy.
+Collaborated with USPS and other carriers to resolve logistical challenges, enhancing overall shipping processes.
+Employment cut short due to Pandemic.
+
+TCGPlayer • Shipping and Receiving Specialist • Syracuse, NY  • 08/2019 - 11/2019
+Verified incoming and outgoing inventory for collectible items, adhering to strict industry standards for quality and condition.
+Conducted data entry and audits to maintain an accurate inventory database in Google Sheets.
+Streamlined warehousing operations by organizing inventory according to a defined system, improving retrieval efficiency.
+Ensured fulfillment accuracy by reconciling product orders against database records.
+Employment cut short due to lay-offs that affected 40% of staff. I was re-offered my position in January, but had already found employment at Docupet.
+
+GoPuff • Delivery Driver / Store Manager • Syracuse, NY • 08/2017 - 08/2019
+Delivered orders promptly while ensuring compliance with regulations for controlled substances such as alcohol and tobacco.
+As Store Manager, managed warehouse inventory by verifying incoming shipments and maintaining accurate product databases.
+Led a team of delivery drivers, overseeing scheduling, performance, and training to meet service expectations.
+Played a key role in hiring and onboarding staff, ensuring team alignment with operational goals and customer satisfaction.
+
+TECH PROJECTS
+Genre Predictor with Spotify API • 09/2024 • Link to GitHub Repository • Video Presentation
+Data gathering/engineering for a machine learning model that predicts song genres based on audio features.
+Gathered 9,000 records from the Spotify API, reducing data retrieval time through optimized API usage.
+Ensured 100% valid API responses, leading to a clean and reliable dataset for model training.
+Delivered a concise presentation of the project’s data gathering methodology, effectively communicating key insights and technical achievements to stakeholders in under three minutes.
+
+Predicting Customer Churn with Machine Learning Boosting Algorithms • 08/24 • Link to GitHub Repository
+Developed a machine learning model to predict customer churn based on historical data.
+Developed a binary classification model with an AUC ROC score of 0.8555 and an accuracy of 81.31%, improving customer retention through offering promotions to customers who were likely to cancel their services.
+Tested and tuned four unique classification algorithms: logistic regression, random forest, XGBClassifier, and CatBoostClassifier. Ultimately concluding the best model, sampling method, hyperparameters, and threshold.
+Provided thorough exploratory data analysis producing key insights into the balance of churned and not churned customers in the data set, distributions of total and monthly charges, the company’s trends for acquiring and churning customers, and the relationship of churn to customers' demographics and services.  
+
+Global Video Game Sales Analysis • 04/24 • Link to GitHub Repository • Slide Deck Presentation
+Analysis of global video game sales spanning from 1980 to 2016, illuminating key trends and metrics. 
+Leveraged T-tests to test two hypotheses, rejecting one hypothesis and retaining another.
+Conducted sales, genre, and regional analysis, visualizing key metrics such as total sales per gaming platform, annual sales distribution per platform, average annual sales per genre, and best selling genres by region.
+Determined valuable insights such as an average platform lifecycle of about five years, platforms with the most potential for continued profitability, and Sony’s dominance in the global video game marketplace.
+Resolved several data integrity issues by implementing a custom normalize function to clean the data set.
+
+EDUCATION
+TripleTen • Data Science Program • 02/2024 - 09/2024 
+700 hour certification covering: data analysis, database management, advanced Python programming, machine learning (supervised and unsupervised), natural language processing, computer vision, and soft skills training.
+
+MITx • Intro to Computer Science and Programming using Python Certification • 2023
+Massachusetts Institute of Technology course focusing on the fundamentals of programming with an emphasis in Python.
+
+Arizona State University • B.A. in English - Creative Writing
+Graduated Summa Cum Laude, GPA: 3.88, 2015 Jules J. Anatole Creative Writing Scholarship recipient, Minor in Transborder Chicana/o Studies.
