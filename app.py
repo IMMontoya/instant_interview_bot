@@ -1,5 +1,13 @@
 from transformers import AutoTokenizer, pipeline
 import gradio as gr
+from huggingface_hub import login
+from dotenv import load_dotenv
+import os
+
+# Log in to the Hugging Face Hub
+load_dotenv()
+huggingface_login = os.getenv("HUGGINGFACE_LOGIN")
+login(token=huggingface_login)
 
 # Load the model and tokenizer
 checkpoint = "meta-llama/Llama-3.2-1B-Instruct"
