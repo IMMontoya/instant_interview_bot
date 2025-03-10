@@ -8,7 +8,10 @@ import os
 load_dotenv()
 huggingface_login = os.getenv("HUGGINGFACE_LOGIN")
 if huggingface_login is None:
-    raise ValueError("Please set the environment variable HUGGINGFACE_LOGIN")
+    try:
+        huggingface_login = os.environ.get("HUGGINGFACE_LOGIN")
+    except:
+        raise ValueError("Please provide your Hugging Face login credentials.")
 
 login(token=huggingface_login, add_to_git_credential=True)
 
