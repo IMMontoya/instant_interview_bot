@@ -92,22 +92,35 @@ if context_length is None:
     else:
         raise ValueError(f"Could not determine context length for model {checkpoint}")
 
+### Define the summarize_message function ###
+def summarize_message(content):
+    summary_system_message = "You are a bot programmed to summarize chatbot messages. Speak as directly as possible with no unnecessary words. You respond by providing a summary of the user's message as if it was written by the user."
+    
+    messages = [{"role": "system", "content": summary_system_message},
+                {"role": "user", "content": content}]
+    
+    response = client.chat_completion(
+        messages,
+        stream=False,
+        seed=42,
+        max_tokens=200
+    )
+    
+    return response.choices[0].message.content
+
 ### Define the response function ###
 def respond(
     message,
-    history: list[tuple[str, str]],
+    history: list[dict],  # Updated to reflect the new format
     max_tokens,
     temperature,
     top_p,
-    system_message = system_message,
+    system_message=system_message,
 ):
     messages = [{"role": "system", "content": system_message}]
 
-    for val in history:
-        if val[0]:
-            messages.append({"role": "user", "content": val[0]})
-        if val[1]:
-            messages.append({"role": "assistant", "content": val[1]})
+    for msg in history:
+        messages.append(msg)  # Directly append the OpenAI-style messages
 
     messages.append({"role": "user", "content": message})
     
@@ -116,30 +129,34 @@ def respond(
     tokenized_input = tokenizer(combined_messages, return_tensors="pt", truncation=False, padding=False)
     
     # Get token length
-    token_length = tokenized_input.input_ids.shape[1] + max_tokens # Add the max_tokens to the token length
+    token_length = tokenized_input.input_ids.shape[1] + max_tokens  # Add the max_tokens to the token length
     print(f"Max tokens: {max_tokens}")
     print(f"Token length: {token_length}")
     print(f"Context length: {context_length}")
     
     truncated = False
-    # Truncate the history if token length exceeds max_tokens
+    # Summarize the message if token length is greater than the context length
     while token_length > context_length:
-        # Remove the oldest message (excluding the system message)
-        if len(messages) > 1:  # Ensure we're not removing the system message
-            truncated = True
-            # Remove the first user-assistant pair
-            messages.pop(1)
-            messages.pop(1)
-            # Recalculate token length after removing a message
-            combined_messages = " ".join([msg["content"] for msg in messages])
-            tokenized_input = tokenizer(combined_messages, return_tensors="pt", truncation=False, padding=False)
-            token_length = tokenized_input.input_ids.shape[1] + max_tokens
+        # Find the first message (excluding the system message)
+        for i, msg in enumerate(messages[1:]):
+            if msg["role"] != "system":
+                # Tokenize the message
+                message_tokens = tokenizer(msg["content"], return_tensors="pt", truncation=False, padding=False)
+                if message_tokens.input_ids.shape[1] > 200:
+                    truncated = True
+                    # Summarize the message
+                    msg["content"] = summarize_message(msg["content"])
+                    break
+                
+        # Recalculate the token length
+        combined_messages = " ".join([msg["content"] for msg in messages])  # Combine all the message contents
+        tokenized_input = tokenizer(combined_messages, return_tensors="pt", truncation=False, padding=False)
+        token_length = tokenized_input.input_ids.shape[1] + max_tokens  # Add the max_tokens to the token length
             
     if truncated:
         print("History roles:")
         for message in messages:
             print(f"{message['role']}: {message['content'][:50]}")
-
 
     response = ""
 
@@ -159,6 +176,7 @@ def respond(
 ### Define the Interface ###
 demo = gr.ChatInterface(
     respond,
+    type="messages",  # Updated to use OpenAI-style 'role' and 'content' keys
     additional_inputs=[
         gr.Slider(minimum=1, maximum=2048, value=512, step=1, label="Max new tokens"),
         gr.Slider(minimum=0.1, maximum=4.0, value=0.7, step=0.1, label="Temperature"),
