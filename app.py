@@ -112,9 +112,9 @@ def summarize_message(content):
 def respond(
     message,
     history: list[dict],  # Updated to reflect the new format
-    max_tokens,
-    temperature,
-    top_p,
+    max_tokens=512,
+    temperature=0.7,
+    top_p=0.95,
     system_message=system_message,
 ):
     messages = [{"role": "system", "content": system_message}]
@@ -137,16 +137,22 @@ def respond(
     truncated = False
     # Summarize the message if token length is greater than the context length
     while token_length > context_length:
+        summarized = False
         # Find the first message (excluding the system message)
         for i, msg in enumerate(messages[1:]):
-            if msg["role"] != "system":
-                # Tokenize the message
-                message_tokens = tokenizer(msg["content"], return_tensors="pt", truncation=False, padding=False)
-                if message_tokens.input_ids.shape[1] > 200:
-                    truncated = True
-                    # Summarize the message
-                    msg["content"] = summarize_message(msg["content"])
-                    break
+            message_tokens = tokenizer(msg["content"], return_tensors="pt", truncation=False, padding=False)
+            if message_tokens.input_ids.shape[1] > 200:
+                truncated = True
+                summarized = True
+                # Summarize the message
+                msg["content"] = summarize_message(msg["content"])
+                break
+            
+        if not summarized:
+            # Remove the first user, assistant pair
+            messages.pop(1)
+            messages.pop(1)
+            truncated = True
                 
         # Recalculate the token length
         combined_messages = " ".join([msg["content"] for msg in messages])  # Combine all the message contents
@@ -176,18 +182,7 @@ def respond(
 ### Define the Interface ###
 demo = gr.ChatInterface(
     respond,
-    type="messages",  # Updated to use OpenAI-style 'role' and 'content' keys
-    additional_inputs=[
-        gr.Slider(minimum=1, maximum=2048, value=512, step=1, label="Max new tokens"),
-        gr.Slider(minimum=0.1, maximum=4.0, value=0.7, step=0.1, label="Temperature"),
-        gr.Slider(
-            minimum=0.1,
-            maximum=1.0,
-            value=0.95,
-            step=0.05,
-            label="Top-p (nucleus sampling)",
-        ),
-    ],
+    type="messages"
 )
 
 ### Launch the Interface ###
