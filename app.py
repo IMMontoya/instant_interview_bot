@@ -182,7 +182,9 @@ def respond(
 ### Define the Interface ###
 demo = gr.ChatInterface(
     respond,
-    type="messages"
+    type="messages",
+    title="Instant Interview bot for Isaiah Montoya",
+    description="This is a chatbot designed to provide instant interview responses as if it were Isaiah Montoya. Note that this application uses generative AI and may not always provide accurate responses.",
 )
 
 ### Launch the Interface ###
