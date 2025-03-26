@@ -1,5 +1,5 @@
 huggingface_hub==0.25.2
-transformers
+transformers==4.50.1
 gradio
 python-dotenv
 torch
