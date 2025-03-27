@@ -183,7 +183,8 @@ def respond(
 demo = gr.ChatInterface(
     respond,
     type="messages",
-    title="Instant Interview bot for Isaiah Montoya",
+    title="Isaiah Montoya Instant Interview",
+    description="Connect with me on [Linkedin](https://www.linkedin.com/in/isaiah-montoya/).",
     chatbot=gr.Chatbot(placeholder="This is a chatbot designed to provide instant interview responses as if it were me (Isaiah Montoya)."),
 )
 
