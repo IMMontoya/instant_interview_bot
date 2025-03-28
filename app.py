@@ -187,7 +187,7 @@ demo = gr.ChatInterface(
     description="- Copy/paste a job description to talk about a specific role. \n\n- Connect with me on [Linkedin](https://www.linkedin.com/in/isaiah-montoya/).",
     chatbot=gr.Chatbot(placeholder="This is a chatbot designed to provide instant interview responses as if it were me (Isaiah Montoya).",
                        type="messages"),
-    allow_flagging="manual",
+    flagging_mode="manual",
 )
 
 ### Launch the Interface ###
