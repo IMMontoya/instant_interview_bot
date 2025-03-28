@@ -185,7 +185,9 @@ demo = gr.ChatInterface(
     type="messages",
     title="Isaiah Montoya Instant Interview",
     description="Connect with me on [Linkedin](https://www.linkedin.com/in/isaiah-montoya/).",
-    chatbot=gr.Chatbot(placeholder="This is a chatbot designed to provide instant interview responses as if it were me (Isaiah Montoya)."),
+    chatbot=gr.Chatbot(placeholder="This is a chatbot designed to provide instant interview responses as if it were me (Isaiah Montoya).",
+                       type="messages"),
+    flagging_mode="manual",
 )
 
 ### Launch the Interface ###
