@@ -157,17 +157,24 @@ def respond(
 
     response = ""
 
-    for output in client.chat_completion(
-        messages,
-        max_tokens=max_tokens,
-        stream=True,
-        temperature=temperature,
-        top_p=top_p,
-    ):
-        token = output.choices[0].delta.content
+    try:
+        for output in client.chat_completion(
+            messages,
+            max_tokens=max_tokens,
+            stream=True,
+            temperature=temperature,
+            top_p=top_p,
+        ):
+            token = output.choices[0].delta.content
 
-        response += token
-        yield response
+            response += token
+            yield response
+    except Exception as e:
+        print("An error occurred during chat completion:")
+        print(f"Error: {e}")
+        print("Messages:")
+        print(messages)
+        raise  # Re-raise the exception after logging
 
 
 ### Define the Interface ###
