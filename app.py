@@ -157,14 +157,14 @@ def respond(
 
     response = ""
 
-    for message in client.chat_completion(
+    for output in client.chat_completion(
         messages,
         max_tokens=max_tokens,
         stream=True,
         temperature=temperature,
         top_p=top_p,
     ):
-        token = message.choices[0].delta.content
+        token = output.choices[0].delta.content
 
         response += token
         yield response
