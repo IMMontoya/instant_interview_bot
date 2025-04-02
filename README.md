@@ -1,17 +1,3 @@
----
-title: Instant Interview
-emoji: 💬
-colorFrom: yellow
-colorTo: purple
-sdk: gradio
-sdk_version: 5.23.1
-app_file: app.py
-pinned: true
-short_description: For hosting instant interview chatbot
-thumbnail: >-
-  https://cdn-uploads.huggingface.co/production/uploads/67572efb860bd4d8f464793e/YgoaI2c7gb8fv53t6LXSL.jpeg
----
-
 # Instant Interview Bot
 
 This chatbot is hosted on [Hugging Face Spaces.](https://huggingface.co/spaces/im93/Instant_Interview/tree/main)
