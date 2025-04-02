@@ -130,11 +130,7 @@ def respond(
     
     # Get token length
     token_length = tokenized_input.input_ids.shape[1] + max_tokens  # Add the max_tokens to the token length
-    print(f"Max tokens: {max_tokens}")
-    print(f"Token length: {token_length}")
-    print(f"Context length: {context_length}")
-    
-    truncated = False
+
     # Summarize the message if token length is greater than the context length
     while token_length > context_length:
         summarized = False
@@ -159,10 +155,7 @@ def respond(
         tokenized_input = tokenizer(combined_messages, return_tensors="pt", truncation=False, padding=False)
         token_length = tokenized_input.input_ids.shape[1] + max_tokens  # Add the max_tokens to the token length
             
-    if truncated:
-        print("History roles:")
-        for message in messages:
-            print(f"{message['role']}: {message['content'][:50]}")
+
 
     response = ""
 
