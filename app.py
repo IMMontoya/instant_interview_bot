@@ -182,7 +182,7 @@ demo = gr.ChatInterface(
     respond,
     type="messages",
     title="Isaiah Montoya Instant Interview",
-    description="- Copy/paste a job description to talk about a specific role. \n\n- Connect with me on [Linkedin](https://www.linkedin.com/in/isaiah-montoya/).",
+    description="Ask me anything about my experience.\n\n*Hint: You can copy/paste a job description to talk about a specific role.* \n\nConnect with me on [Linkedin](https://www.linkedin.com/in/isaiah-montoya/).",
     chatbot=gr.Chatbot(placeholder="This is a chatbot designed to provide instant interview responses as if it were me (Isaiah Montoya).",
                        type="messages"),
     flagging_mode="manual",
