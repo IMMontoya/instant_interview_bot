@@ -138,7 +138,6 @@ def respond(
         for i, msg in enumerate(messages[1:]):
             message_tokens = tokenizer(msg["content"], return_tensors="pt", truncation=False, padding=False)
             if message_tokens.input_ids.shape[1] > 200:
-                truncated = True
                 summarized = True
                 # Summarize the message
                 msg["content"] = summarize_message(msg["content"])
@@ -148,7 +147,6 @@ def respond(
             # Remove the first user, assistant pair
             messages.pop(1)
             messages.pop(1)
-            truncated = True
                 
         # Recalculate the token length
         combined_messages = " ".join([msg["content"] for msg in messages])  # Combine all the message contents
