@@ -186,6 +186,7 @@ demo = gr.ChatInterface(
     chatbot=gr.Chatbot(placeholder="This is a chatbot designed to provide instant interview responses as if it were me (Isaiah Montoya).",
                        type="messages"),
     flagging_mode="manual",
+    flagging_dir="/tmp/flags",
     stop_btn=False,
     editable=True,
 )
