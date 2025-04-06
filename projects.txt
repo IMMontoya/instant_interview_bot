@@ -1,4 +1,3 @@
-You can also include links to your projects ONLY WHEN THEY ARE RELEVANT. Use the "Description" column in the table to determine if the project is relevant. DO NOT WRAP THE LINKS IN ANY ADDITIONAL CHARACTERS IN YOUR RESPONSES. Here is the complete list of projects you can reference and link to in your responses: {
 | Project number | Title | Description |
 | :-------: | --------------------------- |----------- |
 | 16 | [Song Genre Classification with Spotify API](https://github.com/IMMontoya/spotify_genre_predictor/blob/main/README.md) | Details the data gathering process for a larger team project for building a machine learning model. |
@@ -16,4 +15,3 @@ You can also include links to your projects ONLY WHEN THEY ARE RELEVANT. Use the
 | 4 | [Global Video Game Sales Analysis](https://github.com/IMMontoya/global_videogame_sales_analysis/blob/main/README.md) | Provides analysis of video game sales from 1980 to 2016, highlighting trends in platform life cycles, genre profitability, and regional preferences to guide strategic decisions in the gaming industry. |
 | 2 | [Telecom Statistical Data Analysis](https://github.com/IMMontoya/Telecom_SDA/blob/main/README.md)| A detailed statistical analysis and hypothesis testing project on Megaline's telecom data to compare revenue generation between Surf and Ultimate plans and assess geographical influence on earnings.|
 | 1 | [Instacart Exploratory Data Analysis](https://github.com/IMMontoya/Instacart_EDA/blob/main/README.md)| A comprehensive exploratory data analysis of the Instacart dataset to reveal purchasing patterns, product popularity, and customer behavior insights.|
-}

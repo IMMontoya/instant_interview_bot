@@ -1,66 +1,12 @@
-
 import gradio as gr
 from huggingface_hub import login, InferenceClient
 from dotenv import load_dotenv
 import os
 import pandas as pd
 from transformers import AutoConfig, AutoTokenizer
-
-### Define Functions ###
-#### Loading the System Message ####
-def load_system_prompt():
-    system_prompt = ""
-    with open("system_prompt.txt", "r") as f:
-        system_prompt = f.read()
-    
-    # Replace "//RESUME//" with the resume text
-    with open("resume.txt", "r") as f:
-        system_prompt = system_prompt.replace("//RESUME//", f.read())
-        
-    return system_prompt
-
-def add_examples(system_prompt, n_examples):
-    # assert n_examples > 0
-    assert n_examples >= 0, "n_examples must be greater than 0"
-    
-    if n_examples == 0:
-        return system_prompt
-    
-    # Read the "interview_questions_and_answers.csv" file
-    df = pd.read_csv("interview_questions_and_answers.csv")
-    
-    # If n_examples is greater than the number of rows in the DataFrame, set n_examples to the number of rows
-    if n_examples > len(df):
-        n_examples = len(df)
-        print(f"n_examples is greater than the number of rows in the DataFrame. Setting n_examples to {n_examples}.")
-    
-    # Add context to the system prompt
-    system_prompt += "\n\nHere are some examples of questions you might be asked and how you should answer them:{"
-    
-    # Get the first n_examples rows
-    examples = df.head(n_examples)
-    
-    # Add each example to the system prompt
-    for index, row in examples.iterrows():
-        system_prompt += "\n\nExample " + str(index + 1) + ": " "{" + "\nQuestion: {" + row["questions"] + "}" + "\nAnswer: {" + row["answers"] + "}" + "\n}"
-        
-    # Close the system prompt
-    system_prompt += "\n}"
-    
-    return system_prompt
-
-def build_system_message(n_examples, projects=True):
-    system_prompt = load_system_prompt()
-    system_prompt = add_examples(system_prompt, n_examples)
-    
-    if projects:
-        with open("projects.txt", "r") as f:
-            system_prompt += "\n\n" + f.read()
-            
-    return system_prompt
-
-#### Load the System Message ####
-system_message = build_system_message(5, projects=True)
+from sentence_transformers import SentenceTransformer, util
+import torch
+import re
 
 ### Login to the Hugging Face Hub ###
 load_dotenv()
@@ -91,6 +37,101 @@ if context_length is None:
         context_length = 6000
     else:
         raise ValueError(f"Could not determine context length for model {checkpoint}")
+    
+### Load Q&A CSV file ###
+qa_df = pd.read_csv("interview_questions_and_answers.csv")
+
+# Load sentence transformer model
+embedder = SentenceTransformer("all-MiniLM-L6-v2")
+
+# Precompute embeddings for the questions
+qa_questions = qa_df["questions"].tolist()
+qa_answers = qa_df["answers"].tolist()
+qa_embeddings = embedder.encode(qa_questions, convert_to_tensor=True)
+
+### Define Functions ###
+#### Loading the System Message ####
+def load_system_prompt():
+    system_prompt = ""
+    with open("system_prompt.txt", "r") as f:
+        system_prompt = f.read()
+    
+    # Replace "//RESUME//" with the resume text
+    with open("resume.txt", "r") as f:
+        system_prompt = system_prompt.replace("//RESUME//", f.read())
+        
+    return system_prompt
+
+
+
+def retrieve_relevant_qas(query, top_n=3):
+    query_embedding = embedder.encode(query, convert_to_tensor=True)
+    similarities = util.cos_sim(query_embedding, qa_embeddings)[0]
+    
+    top_indices = torch.topk(similarities, k=top_n).indices.tolist()
+    
+    retrieved_qas = []
+    for idx in top_indices:
+        retrieved_qas.append({
+            "question": qa_questions[idx],
+            "answer": qa_answers[idx]
+        })
+    
+    return retrieved_qas
+
+
+# Load and parse the project table from projects.txt
+with open("projects.txt", "r") as f:
+    projects_raw = f.read()
+
+# Extract rows from the markdown table
+project_lines = [line.strip() for line in projects_raw.split("\n") if "|" in line and "Project number" not in line and "---" not in line]
+project_data = []
+
+for line in project_lines:
+    parts = [part.strip() for part in line.split("|") if part.strip()]
+    if len(parts) == 3:
+        project_data.append({
+            "number": parts[0],
+            "title": parts[1],
+            "description": parts[2]
+        })
+
+# Embed project descriptions
+project_descriptions = [p["description"] for p in project_data]
+project_embeddings = embedder.encode(project_descriptions, convert_to_tensor=True)
+
+def retrieve_relevant_projects(query, top_n=3):
+    query_embedding = embedder.encode(query, convert_to_tensor=True)
+    similarities = util.cos_sim(query_embedding, project_embeddings)[0]
+
+    top_indices = torch.topk(similarities, k=top_n).indices.tolist()
+
+    return [project_data[i] for i in top_indices]
+
+def build_rag_prompt(user_input, n_qas=3, n_projects=3, projects=True):
+    system_prompt = load_system_prompt()
+
+    # Add relevant Q&A examples
+    relevant_qas = retrieve_relevant_qas(user_input, top_n=n_qas)
+    system_prompt += "\n\nHere are some relevant interview Q&A examples to help guide your answers:\n"
+    for i, qa in enumerate(relevant_qas):
+        system_prompt += f"\nExample {i + 1}:\nQuestion: {qa['question']}\nAnswer: {qa['answer']}\n"
+
+    # Add relevant projects
+    if projects:
+        system_prompt += '\n\nYou can also include links to your projects ONLY WHEN THEY ARE RELEVANT. Use the "Description" column in the table to determine if the project is relevant. DO NOT WRAP THE LINKS IN ANY ADDITIONAL CHARACTERS IN YOUR RESPONSES. Here is the complete list of relevant projects:\n{'
+
+        relevant_projects = retrieve_relevant_projects(user_input, top_n=n_projects)
+
+        for proj in relevant_projects:
+            system_prompt += f'\nProject {proj["number"]}: {proj["title"]}\nDescription: {proj["description"]}\n'
+
+        system_prompt += "}"
+
+    return system_prompt
+
+
 
 ### Define the summarize_message function ###
 def summarize_message(content):
@@ -111,52 +152,54 @@ def summarize_message(content):
 ### Define the response function ###
 def respond(
     message,
-    history: list[dict],  # Updated to reflect the new format
+    history: list[dict],  # chat history
     max_tokens=512,
     temperature=0.7,
     top_p=0.95,
-    system_message=system_message,
 ):
+    # Build a fresh system message using the latest user input
+    system_message = build_rag_prompt(message, projects=True)
+
+    # Construct the messages list
     messages = [{"role": "system", "content": system_message}]
 
     for msg in history:
-        messages.append(msg)  # Directly append the OpenAI-style messages
+        messages.append(msg)
 
     messages.append({"role": "user", "content": message})
     
-    # Tokenize the messages and count the tokens
-    combined_messages = " ".join([msg["content"] for msg in messages])  # Combine all the message contents
+    # Tokenize the combined messages
+    combined_messages = " ".join([msg["content"] for msg in messages])
     tokenized_input = tokenizer(combined_messages, return_tensors="pt", truncation=False, padding=False)
-    
-    # Get token length
-    token_length = tokenized_input.input_ids.shape[1] + max_tokens  # Add the max_tokens to the token length
 
-    # Summarize the message if token length is greater than the context length
+    # Get total token length
+    token_length = tokenized_input.input_ids.shape[1] + max_tokens
+
+    # Compress or trim history if token length exceeds limit
     while token_length > context_length:
         summarized = False
-        # Find the first message (excluding the system message)
-        for i, msg in enumerate(messages[1:]):
+        for i, msg in enumerate(messages[1:]):  # Skip system message
             message_tokens = tokenizer(msg["content"], return_tensors="pt", truncation=False, padding=False)
             if message_tokens.input_ids.shape[1] > 200:
                 summarized = True
-                # Summarize the message
                 msg["content"] = summarize_message(msg["content"])
                 break
-            
+        
         if not summarized:
-            # Remove the first user, assistant pair
-            messages.pop(1)
-            messages.pop(1)
-                
-        # Recalculate the token length
-        combined_messages = " ".join([msg["content"] for msg in messages])  # Combine all the message contents
+            # Remove the oldest user-assistant message pair
+            if len(messages) > 3:
+                messages.pop(1)
+                messages.pop(1)
+            else:
+                break
+
+        # Recalculate token length
+        combined_messages = " ".join([msg["content"] for msg in messages])
         tokenized_input = tokenizer(combined_messages, return_tensors="pt", truncation=False, padding=False)
-        token_length = tokenized_input.input_ids.shape[1] + max_tokens  # Add the max_tokens to the token length
-            
+        token_length = tokenized_input.input_ids.shape[1] + max_tokens
 
-
+    # Generate the model's response
     response = ""
-
     try:
         for output in client.chat_completion(
             messages,
@@ -166,16 +209,15 @@ def respond(
             top_p=top_p,
         ):
             token = output.choices[0].delta.content
-
             response += token
             yield response
+
     except Exception as e:
         print("An error occurred during chat completion:")
         print(f"Error: {e}")
         print("Messages:")
         print(messages)
-        raise  # Re-raise the exception after logging
-
+        raise
 
 ### Define the Interface ###
 demo = gr.ChatInterface(
@@ -186,7 +228,7 @@ demo = gr.ChatInterface(
     chatbot=gr.Chatbot(placeholder="This is a chatbot designed to provide instant interview responses as if it were me (Isaiah Montoya).",
                        type="messages"),
     flagging_mode="manual",
-    stop_btn=False,
+        stop_btn=False,
     editable=True,
 )
 
