@@ -6,6 +6,12 @@ import os
 import pandas as pd
 from transformers import AutoConfig, AutoTokenizer
 import tempfile
+import warnings
+
+# -----------------------------------------------------
+# Suppress warnings
+# -----------------------------------------------------
+warnings.filterwarnings("ignore", message=".*'Repository'.*is deprecated.*", category=FutureWarning)
 
 # ----------------------------------------------------
 # Functions #
