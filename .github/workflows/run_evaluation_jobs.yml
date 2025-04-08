@@ -2,7 +2,7 @@ name: Update Flagged Dataset
 
 on:
   schedule:
-    - cron: '20 * * * *'  # Run every 20 minutes
+    - cron: '30 * * * *'  # Runs every hour at 30 minutes past the hour
 
 jobs:
   update-dataset:
