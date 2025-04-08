@@ -20,19 +20,9 @@ warnings.filterwarnings("ignore", message=".*'Repository'.*is deprecated.*", cat
 # Functions #
 # ----------------------------------------------------
 def update_flag_dataset():
-    
-    # Get the current time in UTC
-    current_time = datetime.now(timezone.utc)
-    # Read the last time the dataset was updated
-    with open("last_flag_update.txt", "r") as f:
-        last_update_time = f.read()
-    # Convert the last update time to a datetime object
-    last_update_time = datetime.strptime(last_update_time, "%Y-%m-%d %H:%M:%S.%f").replace(tzinfo=timezone.utc)
-    # Check if the last update time is less than 1 hour ago
-    if (current_time - last_update_time).total_seconds() < 3600:
-        print("Dataset already updated within the last hour.")
-        return
-    
+    """
+    """
+        
     # Load token and repo info
     dataset_repo = "https://huggingface.co/datasets/im93/interview_bot_flags"
     log_file_path = "/tmp/flags/log.csv"
@@ -68,6 +58,9 @@ def update_flag_dataset():
 
         # Remove duplicates
         combined_df.drop_duplicates(subset=["flag"], keep="first", inplace=True)
+        # Order by the "flag" column
+        combined_df.sort_values(by=["flag"], ascending=False, inplace=True)
+        # Reset the index
         combined_df.reset_index(drop=True, inplace=True)
         
         # Save updated data
@@ -76,9 +69,6 @@ def update_flag_dataset():
         # Commit and push to the Hub
         repo.push_to_hub(commit_message="Add new flagged logs")
         
-    # Update the last update time
-    with open("last_flag_update.txt", "w") as f:
-        f.write(current_time.strftime("%Y-%m-%d %H:%M:%S.%f"))
 
     print("Dataset updated successfully.")
     
