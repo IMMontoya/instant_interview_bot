@@ -16,6 +16,11 @@ import subprocess
 # -----------------------------------------------------
 warnings.filterwarnings("ignore", message=".*'Repository'.*is deprecated.*", category=FutureWarning)
 
+# -----------------------------------------------------
+# Initialize the flagged df as an empty DataFrame
+# -----------------------------------------------------
+initial_flagged_df = pd.DataFrame()
+
 # ----------------------------------------------------
 # Functions #
 # ----------------------------------------------------
@@ -33,6 +38,13 @@ def update_flag_dataset():
         print("No flagged log file found.")
         return
 
+    # Read the flagged data
+    flagged_df = pd.read_csv(log_file_path)
+    
+    if flagged_df.equals(initial_flagged_df): # If the initial_flagged_df is equal to the flagged_df, then don't need to update
+        print("No new flagged logs to update.")
+        return
+    
     # Create a temporary directory to clone the dataset
     with tempfile.TemporaryDirectory() as tmpdir:
         repo = Repository(local_dir=tmpdir, clone_from=dataset_repo, use_auth_token=hf_token)
@@ -46,8 +58,7 @@ def update_flag_dataset():
 
         dataset_file_path = os.path.join(tmpdir, "log.csv")
 
-        # Read the flagged data
-        flagged_df = pd.read_csv(log_file_path)
+        
 
         # If the dataset file already exists, append; otherwise, create it
         if os.path.exists(dataset_file_path):
@@ -68,6 +79,9 @@ def update_flag_dataset():
 
         # Commit and push to the Hub
         repo.push_to_hub(commit_message="Add new flagged logs")
+        
+        # Update the initial_flagged_df
+        initial_flagged_df = flagged_df
         
 
     print("Dataset updated successfully.")
