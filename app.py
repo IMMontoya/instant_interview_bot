@@ -72,7 +72,7 @@ def update_flag_dataset():
         # Remove duplicates
         combined_df.drop_duplicates(subset=["flag"], keep="first", inplace=True)
         # Order by the "flag" column
-        combined_df.sort_values(by=["flag"], ascending=False, inplace=True)
+        combined_df.sort_values(by=["flag"], ascending=True, inplace=True)
         # Reset the index
         combined_df.reset_index(drop=True, inplace=True)
         
