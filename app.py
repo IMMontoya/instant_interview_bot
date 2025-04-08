@@ -8,6 +8,7 @@ from transformers import AutoConfig, AutoTokenizer
 try:
     from spaces import schedule
 except ImportError:
+    print("There was an error importing the schedule module from spaces.")
     schedule = None  # or define a no-op decorator
     def schedule(cron=None):
         def decorator(func):
@@ -22,7 +23,7 @@ if schedule:
     # Schedule the update_flag_dataset function to run 
     # This will only work if the script is running in a scheduled environment
     # such as a Hugging Face Space or a cron job.
-    @schedule(cron="55 * * * *")
+    @schedule(cron="10 * * * *")
     def run_scheduled_update():
         print("Running scheduled dataset update...")
         update_flag_dataset()
