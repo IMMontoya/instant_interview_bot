@@ -187,6 +187,9 @@ def respond(
         print("Messages:")
         print(messages)
         raise  # Re-raise the exception after logging
+    
+    # Update the flagged dataset
+    update_flag_dataset()
 
 
 ### Define the Interface ###
