@@ -19,14 +19,12 @@ from update_flagged_dataset import update_flag_dataset
 # ----------------------------------------------------
 # Schedule the update_flagged_dataset function #
 # ----------------------------------------------------
-if schedule:
-    # Schedule the update_flag_dataset function to run 
-    # This will only work if the script is running in a scheduled environment
-    # such as a Hugging Face Space or a cron job.
-    @schedule(cron="10 * * * *")
-    def run_scheduled_update():
-        print("Running scheduled dataset update...")
-        update_flag_dataset()
+
+@schedule(cron="10 * * * *")
+def run_scheduled_update():
+    print("Running scheduled dataset update...")
+    update_flag_dataset()
+    
 # ----------------------------------------------------
 # Functions #
 # ----------------------------------------------------
