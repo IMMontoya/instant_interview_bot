@@ -8,6 +8,7 @@ from transformers import AutoConfig, AutoTokenizer
 import tempfile
 import warnings
 from datetime import datetime
+import subprocess
 
 # -----------------------------------------------------
 # Test printing the current date and time
@@ -36,6 +37,11 @@ def update_flag_dataset():
     # Create a temporary directory to clone the dataset
     with tempfile.TemporaryDirectory() as tmpdir:
         repo = Repository(local_dir=tmpdir, clone_from=dataset_repo, use_auth_token=hf_token)
+        
+        # Set Git username and email
+        subprocess.run(["git", "config", "user.name", "HF Bot"])
+        subprocess.run(["git", "config", "user.email", "bot@example.com"])
+        
         repo.git_pull()  # ensure it's up-to-date
 
         dataset_file_path = os.path.join(tmpdir, "log.csv")
