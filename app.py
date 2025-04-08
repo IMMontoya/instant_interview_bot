@@ -1,15 +1,55 @@
 
 import gradio as gr
-from huggingface_hub import login, InferenceClient
+from huggingface_hub import login, InferenceClient, Repository
 from dotenv import load_dotenv
 import os
 import pandas as pd
 from transformers import AutoConfig, AutoTokenizer
-from update_flagged_dataset import update_flag_dataset
+import tempfile
 
 # ----------------------------------------------------
 # Functions #
 # ----------------------------------------------------
+def update_flag_dataset():
+    # Load token and repo info
+    dataset_repo = "https://huggingface.co/datasets/im93/interview_bot_flags"
+    log_file_path = "/tmp/flags/log.csv"
+    hf_token = huggingface_login  # already loaded from .env or environment
+
+    # Skip if log file doesn't exist
+    if not os.path.exists(log_file_path):
+        print("No flagged log file found.")
+        return
+
+    # Create a temporary directory to clone the dataset
+    with tempfile.TemporaryDirectory() as tmpdir:
+        repo = Repository(local_dir=tmpdir, clone_from=dataset_repo, use_auth_token=hf_token)
+        repo.git_pull()  # ensure it's up-to-date
+
+        dataset_file_path = os.path.join(tmpdir, "log.csv")
+
+        # Read the flagged data
+        flagged_df = pd.read_csv(log_file_path)
+
+        # If the dataset file already exists, append; otherwise, create it
+        if os.path.exists(dataset_file_path):
+            existing_df = pd.read_csv(dataset_file_path)
+            combined_df = pd.concat([existing_df, flagged_df], ignore_index=True)
+        else:
+            combined_df = flagged_df
+
+        # Remove duplicates
+        combined_df.drop_duplicates(subset=["flag"], keep="first", inplace=True)
+        combined_df.reset_index(drop=True, inplace=True)
+        
+        # Save updated data
+        combined_df.to_csv(dataset_file_path, index=False)
+
+        # Commit and push to the Hub
+        repo.push_to_hub(commit_message="Add new flagged logs")
+
+    print("Dataset updated successfully.")
+    
 #### Loading the System Message ####
 def load_system_prompt():
     system_prompt = ""
@@ -133,6 +173,10 @@ def respond(
         history.append({"role": "user", "content": message})
         history.append({"role": "assistant", "content": "this is a dummy string to prevent using tokens"})
         yield "this is a dummy string to prevent using tokens"
+        
+        # Update the flagged dataset
+        update_flag_dataset()
+        
         return
     
     
