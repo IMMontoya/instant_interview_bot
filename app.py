@@ -7,6 +7,12 @@ import pandas as pd
 from transformers import AutoConfig, AutoTokenizer
 import tempfile
 import warnings
+from datetime import datetime
+
+# -----------------------------------------------------
+# Test printing the current date and time
+# -----------------------------------------------------
+print("Current date and time:", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
 # -----------------------------------------------------
 # Suppress warnings
