@@ -19,6 +19,7 @@ warnings.filterwarnings("ignore", message=".*'Repository'.*is deprecated.*", cat
 # -----------------------------------------------------
 # Initialize the flagged df as an empty DataFrame
 # -----------------------------------------------------
+global initial_flagged_df
 initial_flagged_df = pd.DataFrame()
 
 # ----------------------------------------------------
@@ -27,7 +28,8 @@ initial_flagged_df = pd.DataFrame()
 def update_flag_dataset():
     """
     """
-        
+    global initial_flagged_df
+    
     # Load token and repo info
     dataset_repo = "https://huggingface.co/datasets/im93/interview_bot_flags"
     log_file_path = "/tmp/flags/log.csv"
