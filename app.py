@@ -146,6 +146,15 @@ def respond(
 
     messages.append({"role": "user", "content": message})
     
+    # Check if the user message is "dummy"
+    if message.strip().lower() == "dummy":
+        # Add a dummy response to the conversation history
+        history.append({"role": "user", "content": message})
+        history.append({"role": "assistant", "content": "this is a dummy string to prevent using tokens"})
+        yield "this is a dummy string to prevent using tokens"
+        return
+    
+    
     # Tokenize the messages and count the tokens
     combined_messages = " ".join([msg["content"] for msg in messages])  # Combine all the message contents
     tokenized_input = tokenizer(combined_messages, return_tensors="pt", truncation=False, padding=False)
