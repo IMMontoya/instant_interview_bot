@@ -5,8 +5,30 @@ from dotenv import load_dotenv
 import os
 import pandas as pd
 from transformers import AutoConfig, AutoTokenizer
+try:
+    from spaces import schedule
+except ImportError:
+    schedule = None  # or define a no-op decorator
+    def schedule(cron=None):
+        def decorator(func):
+            return func
+        return decorator
+from update_flagged_dataset import update_flag_dataset
 
-### Define Functions ###
+# ----------------------------------------------------
+# Schedule the update_flagged_dataset function #
+# ----------------------------------------------------
+if schedule:
+    # Schedule the update_flag_dataset function to run 
+    # This will only work if the script is running in a scheduled environment
+    # such as a Hugging Face Space or a cron job.
+    @schedule(cron="55 * * * *")
+    def run_scheduled_update():
+        print("Running scheduled dataset update...")
+        update_flag_dataset()
+# ----------------------------------------------------
+# Functions #
+# ----------------------------------------------------
 #### Loading the System Message ####
 def load_system_prompt():
     system_prompt = ""
