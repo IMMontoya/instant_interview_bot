@@ -39,8 +39,9 @@ def update_flag_dataset():
         repo = Repository(local_dir=tmpdir, clone_from=dataset_repo, use_auth_token=hf_token)
         
         # Set Git username and email
-        subprocess.run(["git", "config", "user.name", "HF Bot"])
-        subprocess.run(["git", "config", "user.email", "bot@example.com"])
+        subprocess.run(["git", "config", "user.name", "HF Bot"], cwd=tmpdir)
+        subprocess.run(["git", "config", "user.email", "bot@example.com"], cwd=tmpdir)
+
         
         repo.git_pull()  # ensure it's up-to-date
 
