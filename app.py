@@ -5,26 +5,8 @@ from dotenv import load_dotenv
 import os
 import pandas as pd
 from transformers import AutoConfig, AutoTokenizer
-try:
-    from spaces import schedule
-except ImportError:
-    print("There was an error importing the schedule module from spaces.")
-    schedule = None  # or define a no-op decorator
-    def schedule(cron=None):
-        def decorator(func):
-            return func
-        return decorator
 from update_flagged_dataset import update_flag_dataset
 
-# ----------------------------------------------------
-# Schedule the update_flagged_dataset function #
-# ----------------------------------------------------
-
-@schedule(cron="10 * * * *")
-def run_scheduled_update():
-    print("Running scheduled dataset update...")
-    update_flag_dataset()
-    
 # ----------------------------------------------------
 # Functions #
 # ----------------------------------------------------
