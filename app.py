@@ -19,8 +19,8 @@ warnings.filterwarnings("ignore", message=".*'Repository'.*is deprecated.*", cat
 # -----------------------------------------------------
 # Initialize the flagged df as an empty DataFrame
 # -----------------------------------------------------
-global initial_flagged_df
-initial_flagged_df = pd.DataFrame()
+global global_flagged_df
+global_flagged_df = pd.DataFrame()
 
 # ----------------------------------------------------
 # Functions #
@@ -28,7 +28,7 @@ initial_flagged_df = pd.DataFrame()
 def update_flag_dataset():
     """
     """
-    global initial_flagged_df
+    global global_flagged_df
     
     # Load token and repo info
     dataset_repo = "https://huggingface.co/datasets/im93/interview_bot_flags"
@@ -43,7 +43,7 @@ def update_flag_dataset():
     # Read the flagged data
     flagged_df = pd.read_csv(log_file_path)
     
-    if flagged_df.equals(initial_flagged_df): # If the initial_flagged_df is equal to the flagged_df, then don't need to update
+    if flagged_df.equals(global_flagged_df): # If the global_flagged_df is equal to the flagged_df, then don't need to update
         print("No new flagged logs to update.")
         return
     
@@ -82,8 +82,8 @@ def update_flag_dataset():
         # Commit and push to the Hub
         repo.push_to_hub(commit_message="Add new flagged logs")
         
-        # Update the initial_flagged_df
-        initial_flagged_df = flagged_df
+        # Update the global_flagged_df
+        global_flagged_df = flagged_df
         
 
     print("Dataset updated successfully.")
