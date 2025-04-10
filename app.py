@@ -207,7 +207,7 @@ def respond(
     
     # Emergency stop
     if inference_cnt > emergency_stop_threshold:
-        yield "Wow, looks like this bot has been getting a lot of traffic and has exceeded my budget for computational costs. Please consider donating to the project (linked above), and try again later."
+        yield "Wow, looks like this bot has been getting a lot of traffic and has exceeded my budget for computational costs. Please consider [donating to the project](https://www.paypal.com/ncp/payment/NF8NSLUCBLVUS) and try again later."
         return
     
     messages = [{"role": "system", "content": system_message}]
