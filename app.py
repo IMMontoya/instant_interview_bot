@@ -282,6 +282,7 @@ def respond(
         for msg in messages:
             print(f"Role: {msg['role']}, Content: {msg['content']}")
             print()
+        yield f"An error occurred during chat completion: {e}\n Refresh the page and try again."
         raise  # Re-raise the exception after logging
     
     # Add to the inference count
