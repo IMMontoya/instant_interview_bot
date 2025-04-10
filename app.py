@@ -40,7 +40,7 @@ def update_flag_dataset():
 
     # Skip if log file doesn't exist
     if not os.path.exists(log_file_path):
-        print("No flagged log file found.")
+        #debug#print("No flagged log file found.")
         return
 
     # Read the flagged data
