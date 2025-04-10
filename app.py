@@ -310,7 +310,7 @@ Consider donating to support this project:
 </form>
 </div>
 """,
-    chatbot=gr.Chatbot(placeholder="This is a chatbot designed to provide instant interview responses as if it were me (Isaiah Montoya).",
+    chatbot=gr.Chatbot(placeholder="This is a chatbot designed to provide instant interview responses as if it were me (Isaiah Montoya). The idea here is not to pass-off the task of interviewing to AI, but rather to serve as a more immediate and accessible touch-point for recruiters, hiring managers, etc. to engage with my experience through a natural language interface while showcasing my ability to build and launch products with emerging technologies.",
                        type="messages"),
     flagging_mode="manual",
     flagging_dir="/tmp/flags",
