@@ -47,7 +47,7 @@ def update_flag_dataset():
     flagged_df = pd.read_csv(log_file_path)
     
     if flagged_df.equals(global_flagged_df): # If the global_flagged_df is equal to the flagged_df, then don't need to update
-        print("No new flagged logs to update.")
+        #debug#print("No new flagged logs to update.")
         return
     
     # Create a temporary directory to clone the dataset
