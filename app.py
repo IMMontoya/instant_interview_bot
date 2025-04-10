@@ -200,9 +200,15 @@ def respond(
     temperature=0.7,
     top_p=0.95,
     system_message=system_message,
+    emergency_stop_threshold=100
 ):
     # Initialize the inference count
     global inference_cnt
+    
+    # Emergency stop
+    if inference_cnt > emergency_stop_threshold:
+        yield "Wow, looks like this bot has been getting a lot of traffic and has exceeded my budget for computational costs. Please consider donating to the project (linked above), and try again later."
+        return
     
     messages = [{"role": "system", "content": system_message}]
 
