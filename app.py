@@ -286,11 +286,11 @@ def respond(
         raise  # Re-raise the exception after logging
     
     # Add to the inference count
-    inference_count += 1
+    inference_cnt += 1
     
     # Print the inference count if divisible by 10
-    if inference_count % 10 == 0:
-        print(f"Inference count: {inference_count}")
+    if inference_cnt % 10 == 0:
+        print(f"Inference count: {inference_cnt}")
     
     # Update the flagged dataset
     update_flag_dataset()
