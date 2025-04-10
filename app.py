@@ -17,10 +17,13 @@ import subprocess
 warnings.filterwarnings("ignore", message=".*'Repository'.*is deprecated.*", category=FutureWarning)
 
 # -----------------------------------------------------
-# Initialize the flagged df as an empty DataFrame
+# Initialize Global Variables
 # -----------------------------------------------------
 global global_flagged_df
 global_flagged_df = pd.DataFrame()
+
+global inference_cnt
+inference_cnt = 0
 
 # ----------------------------------------------------
 # Functions #
@@ -198,6 +201,9 @@ def respond(
     top_p=0.95,
     system_message=system_message,
 ):
+    # Initialize the inference count
+    global inference_cnt
+    
     messages = [{"role": "system", "content": system_message}]
 
     for msg in history:
@@ -269,6 +275,13 @@ def respond(
         print("Messages:")
         print(messages)
         raise  # Re-raise the exception after logging
+    
+    # Add to the inference count
+    inference_count += 1
+    
+    # Print the inference count if divisible by 10
+    if inference_count % 10 == 0:
+        print(f"Inference count: {inference_count}")
     
     # Update the flagged dataset
     update_flag_dataset()
