@@ -215,6 +215,9 @@ def respond(
     # Initialize the inference count
     global inference_cnt
     
+    # Print the message count and message
+    print(f"Message {message_cnt}: {message}")
+    
     # Emergency stop
     if inference_cnt > emergency_stop_threshold:
         yield "Wow, looks like this bot has been getting a lot of traffic and has exceeded my budget for computational costs. Please consider [donating to the project](https://www.paypal.com/ncp/payment/NF8NSLUCBLVUS) and try again later."
@@ -297,8 +300,7 @@ def respond(
     # Print the inference count if divisible by 10
     if inference_cnt % 10 == 0:
         print(f"Inference count: {inference_cnt}")
-        
-    print(f"Message Count: {message_cnt}")
+    
     
     
 
