@@ -202,6 +202,9 @@ def respond(
     system_message=system_message,
     emergency_stop_threshold=100
 ):
+    # Update the flagged dataset
+    update_flag_dataset()
+    
     # Initialize the inference count
     global inference_cnt
     
@@ -223,10 +226,6 @@ def respond(
         history.append({"role": "user", "content": message})
         history.append({"role": "assistant", "content": "this is a dummy string to prevent using tokens"})
         yield "this is a dummy string to prevent using tokens"
-        
-        # Update the flagged dataset
-        update_flag_dataset()
-        
         return
     
     
@@ -292,8 +291,7 @@ def respond(
     if inference_cnt % 10 == 0:
         print(f"Inference count: {inference_cnt}")
     
-    # Update the flagged dataset
-    update_flag_dataset()
+    
 
 
 ### Define the Interface ###
