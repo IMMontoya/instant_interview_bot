@@ -22,6 +22,9 @@ warnings.filterwarnings("ignore", message=".*'Repository'.*is deprecated.*", cat
 global global_flagged_df
 global_flagged_df = pd.DataFrame()
 
+global message_cnt
+message_cnt = 0
+
 global inference_cnt
 inference_cnt = 0
 
@@ -205,6 +208,10 @@ def respond(
     # Update the flagged dataset
     update_flag_dataset()
     
+    # Initialize the message count
+    global message_cnt
+    message_cnt += 1
+    
     # Initialize the inference count
     global inference_cnt
     
@@ -290,6 +297,8 @@ def respond(
     # Print the inference count if divisible by 10
     if inference_cnt % 10 == 0:
         print(f"Inference count: {inference_cnt}")
+        
+    print(f"Message Count: {message_cnt}")
     
     
 
