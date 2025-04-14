@@ -301,6 +301,7 @@ def respond(
     if inference_cnt % 10 == 0:
         print(f"Inference count: {inference_cnt}")
     
+    print(f"Response: {response}")
     
     
 
