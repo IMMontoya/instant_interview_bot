@@ -324,7 +324,7 @@ Consider donating to support this project:
 
 <style>.pp-NF8NSLUCBLVUS{text-align:center;border:none;border-radius:0.25rem;min-width:11.625rem;padding:0 2rem;height:2.625rem;font-weight:bold;background-color:#FFD140;color:#000000;font-family:"Helvetica Neue",Arial,sans-serif;font-size:1rem;line-height:1.25rem;cursor:pointer;}</style>
 <form action="https://www.paypal.com/ncp/payment/NF8NSLUCBLVUS" method="post" target="_blank" style="display:inline-grid;justify-items:center;align-content:start;gap:0.5rem;">
-  <input class="pp-NF8NSLUCBLVUS" type="submit" value="DONATE" style="font-size: 1.5rem; color: black; background-color: yellow; border-radius: 0.25rem;" />
+  <input class="pp-NF8NSLUCBLVUS" type="submit" value="Donate via PayPal" style="font-size: 1.5rem; color: black; background-color: yellow; border-radius: 0.25rem;" />
   <img src="https://www.paypalobjects.com/images/Debit_Credit_APM.svg" alt="cards" />
 </form>
 </div>
