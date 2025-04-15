@@ -164,6 +164,7 @@ login(token=huggingface_login, add_to_git_credential=True)
 checkpoint = "google/gemma-3-27b-it"
 client = InferenceClient(
     checkpoint,
+    provider="nebius",
     token=huggingface_login
 )
 
