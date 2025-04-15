@@ -176,7 +176,7 @@ context_length = getattr(config, "max_position_embeddings", None)
 if context_length is None:
     # If the model is google/gemma-3-27b-it, set the context length to 128000
     if checkpoint == "google/gemma-3-27b-it":
-        context_length = 6000
+        context_length = 128000
     else:
         raise ValueError(f"Could not determine context length for model {checkpoint}")
 
