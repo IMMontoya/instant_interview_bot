@@ -14,7 +14,7 @@ thumbnail: >-
 
 # Instant Interview Bot
 
-This chatbot is hosted on [Hugging Face Spaces.](https://sites.google.com/view/isaiahmontoya/instant-interview?)
+This chatbot is hosted on [Hugging Face Spaces.](https://huggingface.co/spaces/im93/Instant_Interview/tree/main)
 
 ## Overview
 
@@ -22,7 +22,7 @@ This project uses generative AI to allow users to conduct an interview with a ch
 
 ## Live Demo
 
-You can try out the live demo of the Instant Interview Bot [here.](https://huggingface.co/spaces/im93/Instant_Interview)
+You can try out the live demo of the Instant Interview Bot [here.](https://sites.google.com/view/isaiahmontoya/instant-interview?)
 
 ## Model
 
