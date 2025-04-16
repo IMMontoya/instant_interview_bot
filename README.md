@@ -14,7 +14,7 @@ thumbnail: >-
 
 # Instant Interview Bot
 
-This chatbot is hosted on [Hugging Face Spaces.](https://huggingface.co/spaces/im93/Instant_Interview/tree/main)
+This chatbot is hosted on [Hugging Face Spaces.](https://sites.google.com/view/isaiahmontoya/instant-interview?)
 
 ## Overview
 
