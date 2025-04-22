@@ -1,5 +1,5 @@
 import gradio as gr
-from huggingface_hub import login, InferenceClient
+from huggingface_hub import login, InferenceClient, Repository
 from dotenv import load_dotenv
 import os
 import pandas as pd
@@ -7,6 +7,149 @@ from transformers import AutoConfig, AutoTokenizer
 from sentence_transformers import SentenceTransformer, util
 import torch
 import re
+import tempfile
+import warnings
+from datetime import datetime, timezone
+import subprocess
+
+
+# -----------------------------------------------------
+# Suppress warnings
+# -----------------------------------------------------
+warnings.filterwarnings("ignore", message=".*'Repository'.*is deprecated.*", category=FutureWarning)
+
+# -----------------------------------------------------
+# Initialize Global Variables
+# -----------------------------------------------------
+global global_flagged_df
+global_flagged_df = pd.DataFrame()
+
+global message_cnt
+message_cnt = 0
+
+global inference_cnt
+inference_cnt = 0
+
+# ----------------------------------------------------
+# Functions #
+# ----------------------------------------------------
+def update_flag_dataset():
+    """
+    """
+    global global_flagged_df
+    
+    # Load token and repo info
+    dataset_repo = "https://huggingface.co/datasets/im93/interview_bot_flags"
+    log_file_path = "/tmp/flags/log.csv"
+    hf_token = huggingface_login  # already loaded from .env or environment
+
+    # Skip if log file doesn't exist
+    if not os.path.exists(log_file_path):
+        #debug#print("No flagged log file found.")
+        return
+
+    # Read the flagged data
+    flagged_df = pd.read_csv(log_file_path)
+    
+    if flagged_df.equals(global_flagged_df): # If the global_flagged_df is equal to the flagged_df, then don't need to update
+        #debug#print("No new flagged logs to update.")
+        return
+    
+    # Create a temporary directory to clone the dataset
+    with tempfile.TemporaryDirectory() as tmpdir:
+        repo = Repository(local_dir=tmpdir, clone_from=dataset_repo, use_auth_token=hf_token)
+        
+        # Set Git username and email
+        subprocess.run(["git", "config", "user.name", "HF Bot"], cwd=tmpdir)
+        subprocess.run(["git", "config", "user.email", "bot@example.com"], cwd=tmpdir)
+
+        
+        repo.git_pull()  # ensure it's up-to-date
+
+        dataset_file_path = os.path.join(tmpdir, "log.csv")
+
+        
+
+        # If the dataset file already exists, append; otherwise, create it
+        if os.path.exists(dataset_file_path):
+            existing_df = pd.read_csv(dataset_file_path)
+            combined_df = pd.concat([existing_df, flagged_df], ignore_index=True)
+        else:
+            combined_df = flagged_df
+
+        # Remove duplicates
+        combined_df.drop_duplicates(subset=["flag"], keep="first", inplace=True)
+        # Order by the "flag" column
+        combined_df.sort_values(by=["flag"], ascending=True, inplace=True)
+        # Reset the index
+        combined_df.reset_index(drop=True, inplace=True)
+        
+        # Save updated data
+        combined_df.to_csv(dataset_file_path, index=False)
+
+        # Commit and push to the Hub
+        repo.push_to_hub(commit_message="Add new flagged logs")
+        
+        # Update the global_flagged_df
+        global_flagged_df = flagged_df
+        
+
+    print("Dataset updated successfully.")
+    
+#### Loading the System Message ####
+def load_system_prompt():
+    system_prompt = ""
+    with open("system_prompt.txt", "r") as f:
+        system_prompt = f.read()
+    
+    # Replace "//RESUME//" with the resume text
+    with open("resume.txt", "r") as f:
+        system_prompt = system_prompt.replace("//RESUME//", f.read())
+        
+    return system_prompt
+
+def add_examples(system_prompt, n_examples):
+    # assert n_examples > 0
+    assert n_examples >= 0, "n_examples must be greater than 0"
+    
+    if n_examples == 0:
+        return system_prompt
+    
+    # Read the "interview_questions_and_answers.csv" file
+    df = pd.read_csv("interview_questions_and_answers.csv")
+    
+    # If n_examples is greater than the number of rows in the DataFrame, set n_examples to the number of rows
+    if n_examples > len(df):
+        n_examples = len(df)
+        print(f"n_examples is greater than the number of rows in the DataFrame. Setting n_examples to {n_examples}.")
+    
+    # Add context to the system prompt
+    system_prompt += "\n\nHere are some examples of questions you might be asked and how you should answer them:{"
+    
+    # Get the first n_examples rows
+    examples = df.head(n_examples)
+    
+    # Add each example to the system prompt
+    for index, row in examples.iterrows():
+        system_prompt += "\n\nExample " + str(index + 1) + ": " "{" + "\nQuestion: {" + row["questions"] + "}" + "\nAnswer: {" + row["answers"] + "}" + "\n}"
+        
+    # Close the system prompt
+    system_prompt += "\n}"
+    
+    return system_prompt
+
+def build_system_message(n_examples, projects=True):
+    system_prompt = load_system_prompt()
+    system_prompt = add_examples(system_prompt, n_examples)
+    
+    if projects:
+        with open("projects.txt", "r") as f:
+            system_prompt += "\n\n" + f.read()
+            
+    return system_prompt
+
+#### Load the System Message ####
+system_message = build_system_message(5, projects=True)
 
 ### Login to the Hugging Face Hub ###
 load_dotenv()
@@ -23,6 +166,7 @@ login(token=huggingface_login, add_to_git_credential=True)
 checkpoint = "google/gemma-3-27b-it"
 client = InferenceClient(
     checkpoint,
+    provider="nebius",
     token=huggingface_login
 )
 
@@ -34,7 +178,7 @@ context_length = getattr(config, "max_position_embeddings", None)
 if context_length is None:
     # If the model is google/gemma-3-27b-it, set the context length to 128000
     if checkpoint == "google/gemma-3-27b-it":
-        context_length = 6000
+        context_length = 128000
     else:
         raise ValueError(f"Could not determine context length for model {checkpoint}")
     
@@ -156,7 +300,27 @@ def respond(
     max_tokens=512,
     temperature=0.7,
     top_p=0.95,
+    system_message=system_message,
+    emergency_stop_threshold=100
 ):
+    # Update the flagged dataset
+    update_flag_dataset()
+    
+    # Initialize the message count
+    global message_cnt
+    message_cnt += 1
+    
+    # Initialize the inference count
+    global inference_cnt
+    
+    # Print the message count and message
+    print(f"Message {message_cnt}: {message}")
+    
+    # Emergency stop
+    if inference_cnt > emergency_stop_threshold:
+        yield "Wow, looks like this bot has been getting a lot of traffic and has exceeded my budget for computational costs. Please consider [donating to the project](https://www.paypal.com/ncp/payment/NF8NSLUCBLVUS) and try again later."
+        return
+    
     # Build a fresh system message using the latest user input
     system_message = build_rag_prompt(message, projects=True)
 
@@ -216,6 +380,23 @@ def respond(
         print("An error occurred during chat completion:")
         print(f"Error: {e}")
         print("Messages:")
+        for msg in messages:
+            print(f"Role: {msg['role']}, Content: {msg['content']}")
+            print()
+        yield f"An error occurred during chat completion: {e}\n Refresh the page and try again."
+        raise  # Re-raise the exception after logging
+    
+    # Add to the inference count
+    inference_cnt += 1
+    
+    # Print the inference count if divisible by 10
+    if inference_cnt % 10 == 0:
+        print(f"Inference count: {inference_cnt}")
+    
+    print(f"Response: {response}")
+    
+    
+
         print(messages)
         raise
 
@@ -224,10 +405,29 @@ demo = gr.ChatInterface(
     respond,
     type="messages",
     title="Isaiah Montoya Instant Interview",
-    description="Ask me anything about my experience.\n\n*Hint: You can copy/paste a job description to talk about a specific role.* \n\nConnect with me on [Linkedin](https://www.linkedin.com/in/isaiah-montoya/).",
-    chatbot=gr.Chatbot(placeholder="This is a chatbot designed to provide instant interview responses as if it were me (Isaiah Montoya).",
-                       type="messages"),
+    description="""
+<div style="text-align: center;">
+Ask me anything about my experience.
+
+Try copy/pasting a job description to talk about a specific role.
+
+Connect with me on [Linkedin](https://www.linkedin.com/in/isaiah-montoya/). <br>
+Checkout the [Github Repo](https://github.com/IMMontoya/instant_interview_bot).
+
+Consider [donating](https://www.paypal.com/ncp/payment/NF8NSLUCBLVUS) to support this project:
+
+<style>.pp-NF8NSLUCBLVUS{text-align:center;border:none;border-radius:0.25rem;min-width:11.625rem;padding:0 2rem;height:2.625rem;font-weight:bold;background-color:#FFD140;color:#000000;font-family:"Helvetica Neue",Arial,sans-serif;font-size:1rem;line-height:1.25rem;cursor:pointer;}</style>
+<form action="https://www.paypal.com/ncp/payment/NF8NSLUCBLVUS" method="post" target="_blank" style="display:inline-grid;justify-items:center;align-content:start;gap:0.5rem;">
+  <input class="pp-NF8NSLUCBLVUS" type="submit" value="Donate via PayPal" style="font-size: 1.5rem; color: black; background-color: yellow; border-radius: 0.25rem;" />
+  <img src="https://www.paypalobjects.com/images/Debit_Credit_APM.svg" alt="cards" />
+</form>
+</div>
+""",
+    chatbot=gr.Chatbot(placeholder="<div style='text-align: center;'>This is a chatbot designed to provide instant interview responses as if it were me (Isaiah Montoya).</div>",
+    type="messages"),
     flagging_mode="manual",
+    flagging_dir="/tmp/flags",
+    stop_btn=False,
         stop_btn=False,
     editable=True,
 )

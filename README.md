@@ -22,7 +22,7 @@ This project uses generative AI to allow users to conduct an interview with a ch
 
 ## Live Demo
 
-You can try out the live demo of the Instant Interview Bot [here.](https://huggingface.co/spaces/im93/Instant_Interview)
+You can try out the live demo of the Instant Interview Bot [here.](https://sites.google.com/view/isaiahmontoya/instant-interview?)
 
 ## Model
 
@@ -36,7 +36,7 @@ The model is provided context and instruction via the system role. The system me
 
 1. The model is instructed to act as a chatbot representing me in the [system_prompt.txt](system_prompt.txt) document.
 2. My [resume](resume.txt) is provided as context so that the model can accurately answer questions about my experience.
-3. The "few-shot" method is employed to provide the model with examples of how to respond to questions.
+3. The "few-shot" method is employed to provide the model with examples of how to respond to questions via the [interview_questions_and_answers.csv](interview_questions_and_answers.csv) file. This file contains a list of common interview questions and my answers to them, which the model can use as a reference when generating responses.
 
 ### Managing Context
 

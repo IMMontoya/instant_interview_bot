@@ -1,7 +1,10 @@
+# Envs
 .venv
 .env
 
 # Any notebooks
 *.ipynb
 
+.DS_Store
 notes.md
+
