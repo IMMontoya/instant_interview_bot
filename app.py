@@ -308,9 +308,13 @@ def respond(
         tokenized_input = tokenizer(combined_messages, return_tensors="pt", truncation=False, padding=False)
         token_length = tokenized_input.input_ids.shape[1] + max_tokens
 
-    # Check for dummy messages
-    if message.lower().strip() == "dummy":
-        return "This is a dummy message."
+    # Check if the user message is "dummy"
+    if message.strip().lower() == "dummy":
+        # Add a dummy response to the conversation history
+        history.append({"role": "user", "content": message})
+        history.append({"role": "assistant", "content": "this is a dummy string to prevent using tokens"})
+        yield "this is a dummy string to prevent using tokens"
+        return
     
     # Generate the model's response
     response = ""
