@@ -172,13 +172,15 @@ def build_rag_prompt(user_input, n_qas=3, n_projects=3, projects=True):
 
     # Add relevant Q&A examples
     relevant_qas = retrieve_relevant_qas(user_input, top_n=n_qas)
-    system_prompt += "\n\nHere are some relevant interview Q&A examples to help guide your answers:\n"
+    system_prompt += "\n\nHere are some relevant interview Q&A examples to help guide your answers: {"
     for i, qa in enumerate(relevant_qas):
         system_prompt += f"\nExample {i + 1}:\nQuestion: {qa['question']}\nAnswer: {qa['answer']}\n"
 
+    system_prompt += "}"
+
     # Add relevant projects
     if projects:
-        system_prompt += '\n\nYou can also include links to your projects ONLY WHEN THEY ARE RELEVANT. Use the "Description" column in the table to determine if the project is relevant. DO NOT WRAP THE LINKS IN ANY ADDITIONAL CHARACTERS IN YOUR RESPONSES. Here is the complete list of relevant projects:\n{'
+        system_prompt += '\n\nYou can also include links to your projects ONLY WHEN THEY ARE RELEVANT. Use the "Description" column in the table to determine if the project is relevant. DO NOT WRAP THE LINKS IN ANY ADDITIONAL CHARACTERS IN YOUR RESPONSES. Here is the complete list of relevant projects: {'
 
         relevant_projects = retrieve_relevant_projects(user_input, top_n=n_projects)
 
