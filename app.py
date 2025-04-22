@@ -17,6 +17,7 @@ import subprocess
 # Suppress warnings
 # -----------------------------------------------------
 warnings.filterwarnings("ignore", message=".*'Repository'.*is deprecated.*", category=FutureWarning)
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 # -----------------------------------------------------
 # Initialize Global Variables
