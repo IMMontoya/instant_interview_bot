@@ -7,7 +7,7 @@ SKILLS
 Python (Pandas, Numpy, Matplotlib, Seaborn) • Excel (with VBA) • Data Analysis (preprosing, exploratory, statistical) • Data Visualization (Tableau, PowerBI) • SQL (mySQL, postgre) • ETL Processes • Machine Learning (supervised learning, ML for text, computer vision, unsupervised learning) • APIs • GitHub • Jupyter Notebooks • Automation & Algorithms • Artificial Intelligence • Prompt Engineering • Ollama
 
 EXPERIENCE
-Xai • Audio Editor Intelligence Analyst • 1/2025 - Current
+Xai • Audio Editor Intelligence Analyst • 1/2025 - 2/2025 (Short Term Contract)
 Processed and structured raw audio data by cleaning to enhance data quality and consistency.
 Applied advanced signal processing techniques to optimize data integrity.
 Followed standardized workflows and data formatting conventions to ensure accurate data processing and compliance with project specifications.
