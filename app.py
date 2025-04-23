@@ -265,8 +265,9 @@ def respond(
     global inference_cnt
     
     # Print the message count
+    now = datetime.now(timezone.utc)
     print("\n###################")
-    print(f"Message {message_cnt}")
+    print(f"{now.strftime('%Y-%m-%d %H:%M:%S')} - Message Count: {message_cnt}")
     
     # Emergency stop
     if inference_cnt > emergency_stop_threshold:
@@ -332,7 +333,7 @@ def respond(
             ### For Debugging - Avoids usage of tokens ###
             # response = "This is a dummy chat completion"
             # yield response
-            #############################################
+            ##############################################
             
             for output in client.chat_completion(
                 messages,
