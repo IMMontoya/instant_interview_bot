@@ -366,8 +366,10 @@ def respond(
     
     
 
+#-------------------------------------------
+### Define the chat interface ###
+#-------------------------------------------
 
-### Define the Interface ###
 demo = gr.ChatInterface(
     respond,
     type="messages",
