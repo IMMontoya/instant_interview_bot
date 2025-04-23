@@ -1,7 +1,6 @@
 Isaiah Montoya
-Data and Python Development
 
-Certified Data Scientist and Developer with 3+ years experience in providing business insights and process improvements. Skilled at making enterprise data meaningful to key stakeholders with a proven track record creating novel solutions and boosting productivity. Demonstrated exceptional leadership and communication abilities, leveraging emotional intelligence to build strong relationships, foster collaboration, and drive results-driven teams forward.
+Certified Data Scientist and Developer with 2.5 years experience in providing business insights and process improvements. Skilled at making enterprise data meaningful to key stakeholders with a proven track record creating novel solutions and boosting productivity. Demonstrated exceptional leadership and communication abilities, leveraging emotional intelligence to build strong relationships, foster collaboration, and drive results-driven teams forward.
 
 SKILLS
 Python (Pandas, Numpy, Matplotlib, Seaborn) • Excel (with VBA) • Data Analysis (preprosing, exploratory, statistical) • Data Visualization (Tableau, PowerBI) • SQL (mySQL, postgre) • ETL Processes • Machine Learning (supervised learning, ML for text, computer vision, unsupervised learning) • APIs • GitHub • Jupyter Notebooks • Automation & Algorithms • Artificial Intelligence • Prompt Engineering • Ollama
@@ -20,9 +19,12 @@ Provided a thorough slide-deck presentation with informative visualizations to t
 
 StrataTech Education Group • Marketing Data Specialist • Phoenix, AZ • 05/2022 - 12/2023
 Responsible for processing of all marketing related invoices, account reconciliation, and financial reporting.
-Collaborated cross-functionally with database administrators to create the infrastructure needed during a data migration process,  including an algorithm that successfully categorized the status of over 100,000 records.
-Designed and led the implementation of a budgeting software tool (using Excel and VBA) for the marketing department that organized over a million dollars in monthly spend and automated reporting.
-Developed four unique dashboards using Power BI and Salesforce Intelligence, plus regular and ad hoc reporting.
+Collaborated cross-functionally with database administrators to create and deploy an algorithm that successfully
+categorized the status of over 100,000 records for a data migration eﬀort.
+Designed and led the implementation of a budgeting software tool (using Excel and VBA) for the marketing
+department that organized over a million dollars in monthly spend and automated reporting.
+Developed four unique dashboards using Power BI and Salesforce Intelligence, plus regular and ad hoc
+reporting.
 Audited existing data flows, discovered errors that were costing thousands of dollars on a monthly basis.
 Consistently received “exceeds expectations” in semi-annual performance reviews while working remotely.
 
@@ -32,9 +34,6 @@ Created and implemented a custom billing tool using Google Sheets to calculate m
 Collaborated with other departments to transition from an analog-based storage tracking system to a digital system, resulting in major time savings and a more traceable, modernized process.
 
 Starbucks • Barista • Mesa, AZ • 08/2020 - 07/2021
-Processed high-volume financial transactions with 100% accuracy while maintaining compliance with cash handling procedures.
-Adapted quickly to changing priorities during peak hours while ensuring quality service standards.
-Collaborated with team members to identify and resolve potential security and compliance issues.
 
 DocuPet • Fulfillment Officer • Syracuse, NY • 12/2019 - 03/2020
 Oversaw inventory management and logistics, ensuring timely processing and shipment of all U.S. customer orders.
