@@ -32,15 +32,18 @@ This project uses the [google/gemma-3-27b-it](https://huggingface.co/google/gemm
 
 ### System Message
 
-The model is provided context and instruction via the system role. The system message is built in three steps.
+The model is provided context and instruction via the system role. The system message is built in four steps.
 
 1. The model is instructed to act as a chatbot representing me in the [system_prompt.txt](system_prompt.txt) document.
 2. My [resume](resume.txt) is provided as context so that the model can accurately answer questions about my experience.
-3. The "few-shot" method is employed to provide the model with examples of how to respond to questions via the [interview_questions_and_answers.csv](interview_questions_and_answers.csv) file. This file contains a list of common interview questions and my answers to them, which the model can use as a reference when generating responses.
+3. Retrieval-Augmented Generation (RAG) and the "few-shot" method is employed to provide the model with examples of how to respond to questions via the [interview_questions_and_answers.csv](interview_questions_and_answers.csv) file. This file contains a list of common interview questions and my answers to them, which the model can use as a reference when generating responses.
+4. Similarly, RAG and the 'few-shot' method are used to include relevant projects in the system message.
+
+The system message is rebuilt with every user input in order to provide the most relevant context while keeping the system message token count low.
 
 ### Managing Context
 
-The model is capable of maintaining context over a conversation, but it is limited by the maximum token limit of inference client. To manage this, the oldest messages are summarized to 200 tokens using the same model, then replaced with the summary in the conversation history once the token limit is reached. This allows the model to maintain context while also ensuring that it does not exceed the token limit. Still, this method will eventually exceed the token limit, so additional logic is included to remove the oldest messages from the conversation history once the token limit is reached.
+The model is capable of maintaining context over a conversation, but it is limited by its max_position_embeddings (context window). To manage this, the oldest messages are summarized to 200 tokens using the same model, then replaced with the summary in the conversation history once the token limit is reached. This allows the model to maintain context while also ensuring that it does not exceed the token limit. Still, this method will eventually exceed the token limit, so additional logic is included to remove the oldest messages from the conversation history once the token limit is reached.
 
 *Note: The system message is never summarized or removed from the conversation history. This is to ensure that the model always has access to the context and instruction provided.*
 
@@ -48,4 +51,4 @@ The model is capable of maintaining context over a conversation, but it is limit
 
 - Add suggested questions to the UI to help guide the conversation. Cache the answers and/or use the interview_questions_and_answers.csv file to provide answers without using inference tokens.
 - Add voice input support.
-- Implement a RAG system to parse through my CV and provide more accurate answers to questions without exhausting the context window.
+- further develop the RAG system to pull the README files for relevant projects.
