@@ -242,8 +242,10 @@ if context_length is None:
         raise ValueError(f"Could not determine context length for model {checkpoint}")
     
 
+#-------------------------------------------
+# Define the Respond Function
+#-------------------------------------------
 
-### Define the response function ###
 def respond(
     message,
     history: list[dict],  # chat history
