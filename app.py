@@ -264,8 +264,9 @@ def respond(
     # Initialize the inference count
     global inference_cnt
     
-    # Print the message count and message
-    print(f"Message {message_cnt}: {message}")
+    # Print the message count
+    print("\n###################")
+    print(f"Message {message_cnt}")
     
     # Emergency stop
     if inference_cnt > emergency_stop_threshold:
@@ -282,6 +283,9 @@ def respond(
         messages.append(msg)
 
     messages.append({"role": "user", "content": message})
+    
+    for msg in messages:
+        print(msg["role"] + ": " + msg["content"])
     
     # Tokenize the combined messages
     combined_messages = " ".join([msg["content"] for msg in messages])
@@ -318,41 +322,50 @@ def respond(
         # Add a dummy response to the conversation history
         history.append({"role": "user", "content": message})
         history.append({"role": "assistant", "content": "this is a dummy string to prevent using tokens"})
-        yield "this is a dummy string to prevent using tokens"
-        return
-    
-    # Generate the model's response
-    response = ""
-    try:
-        for output in client.chat_completion(
-            messages,
-            max_tokens=max_tokens,
-            stream=True,
-            temperature=temperature,
-            top_p=top_p,
-        ):
-            token = output.choices[0].delta.content
-            response += token
-            yield response
+        response = "this is a dummy string to prevent using tokens"
+        yield response
 
-    except Exception as e:
-        print("An error occurred during chat completion:")
-        print(f"Error: {e}")
-        print("Messages:")
-        for msg in messages:
-            print(f"Role: {msg['role']}, Content: {msg['content']}")
-            print()
-        yield f"An error occurred during chat completion: {e}\n Refresh the page and try again."
-        raise  # Re-raise the exception after logging
+    else:    
+        # Generate the model's response
+        response = ""
+        try:
+            ### For Debugging/ Avoids usage of tokens ###
+            # response = "This is a dummy chat completion"
+            # yield response
+            #############################################
+            
+            for output in client.chat_completion(
+                messages,
+                max_tokens=max_tokens,
+                stream=True,
+                temperature=temperature,
+                top_p=top_p,
+            ):
+                token = output.choices[0].delta.content
+                response += token
+                yield response
+                
+                # Add to the inference count
+                inference_cnt += 1
+                
+                # Print the inference count if divisible by 10
+                if inference_cnt % 10 == 0:
+                    print(f"Inference count: {inference_cnt}")
+
+        except Exception as e:
+            print("An error occurred during chat completion:")
+            print(f"Error: {e}")
+            print("Messages:")
+            for msg in messages:
+                print(f"Role: {msg['role']}, Content: {msg['content']}")
+                print()
+            yield f"An error occurred during chat completion: {e}\n Refresh the page and try again."
+            raise  # Re-raise the exception after logging
+        
+    print(f"response: {response}")
     
-    # Add to the inference count
-    inference_cnt += 1
     
-    # Print the inference count if divisible by 10
-    if inference_cnt % 10 == 0:
-        print(f"Inference count: {inference_cnt}")
-    
-    print(f"Response: {response}")
+
 
 ### Define the Interface ###
 demo = gr.ChatInterface(
