@@ -249,7 +249,7 @@ if context_length is None:
 def respond(
     message,
     history: list[dict],  # chat history
-    max_tokens=512,
+    max_tokens=256,
     temperature=0.7,
     top_p=0.95,
     emergency_stop_threshold=100
