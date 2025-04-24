@@ -346,12 +346,12 @@ def respond(
                 response += token
                 yield response
                 
-                # Add to the inference count
-                inference_cnt += 1
-                
-                # Print the inference count if divisible by 10
-                if inference_cnt % 10 == 0:
-                    print(f"Inference count: {inference_cnt}")
+            # Add to the inference count
+            inference_cnt += 1
+            
+            # Print the inference count if divisible by 10
+            if inference_cnt % 10 == 0:
+                print(f"Inference count: {inference_cnt}")
 
         except Exception as e:
             print("An error occurred during chat completion:")
