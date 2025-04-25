@@ -252,7 +252,7 @@ def respond(
     max_tokens=256,
     temperature=0.7,
     top_p=0.95,
-    emergency_stop_threshold=100
+    emergency_stop_threshold=500
 ):
     # Update the flagged dataset
     update_flag_dataset()
