@@ -314,19 +314,18 @@ def respond(
     
     # Initialize the inference count
     global inference_cnt
-    
-    # Print the message count
-    now = datetime.now(timezone.utc)
-    print("\n###################")
-    print(f"{now.strftime('%Y-%m-%d %H:%M:%S')} - Message Count: {message_cnt}")
-    
+        
     # Emergency stop
     if inference_cnt > emergency_stop_threshold:
         yield "Wow, looks like this bot has been getting a lot of traffic and has exceeded my budget for computational costs. Please consider [donating to the project](https://www.paypal.com/ncp/payment/NF8NSLUCBLVUS) and try again later."
         return
     
+    # Show the current time to the LLM
+    now = datetime.now(timezone.utc)
+    system_message = f"Current time: {now.strftime('%Y-%m-%d %H:%M:%S')}\n"
+    
     # Build a fresh system message using the latest user input
-    system_message = build_rag_prompt(message)
+    system_message += build_rag_prompt(message)
 
     # Construct the messages list
     messages = [{"role": "system", "content": system_message}]
