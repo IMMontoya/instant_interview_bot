@@ -6,11 +6,11 @@ import pandas as pd
 from transformers import AutoConfig, AutoTokenizer
 from sentence_transformers import SentenceTransformer, util
 import torch
-import re
 import tempfile
 import warnings
 from datetime import datetime, timezone
 import subprocess
+import re
 
 
 # -----------------------------------------------------
@@ -31,6 +31,16 @@ message_cnt = 0
 global inference_cnt
 inference_cnt = 0
 
+#-----------------------------------------------------
+# Initialize Environment Variables
+#-----------------------------------------------------
+# Stopwords for tag-query matching
+stopwords = {
+    'and', 'or', 'the', 'a', 'an', 'in', 'on', 'of', 'for', 'to', 'with',
+    'is', 'are', 'was', 'were', 'be', 'being', 'been', 'at', 'by', 'from',
+    'that', 'this', 'it', 'as', 'your', 'you', 'i', 'me', 'my', 'our', 'we', 'large', 'data'
+}
+
 # -----------------------------------------------------
 # Initialize Embeddings
 # -----------------------------------------------------
@@ -44,26 +54,14 @@ qa_questions = qa_df["questions"].tolist()
 qa_answers = qa_df["answers"].tolist()
 qa_embeddings = embedder.encode(qa_questions, convert_to_tensor=True)
 
-# Load and parse the project table from projects.txt
-with open("projects.txt", "r") as f:
-    projects_raw = f.read()
+# -----------------------------------------------------
+### Load the Projects Descriptions CSV file ###
+projects_df = pd.read_csv("projects_table.csv")
 
-# Extract rows from the markdown table
-project_lines = [line.strip() for line in projects_raw.split("\n") if "|" in line and "Project number" not in line and "---" not in line]
-project_data = []
-
-for line in project_lines:
-    parts = [part.strip() for part in line.split("|") if part.strip()]
-    if len(parts) == 3:
-        project_data.append({
-            "number": parts[0],
-            "title": parts[1],
-            "description": parts[2]
-        })
-
-# Embed project descriptions
-project_descriptions = [p["description"] for p in project_data]
+# Precompute embeddings
+project_descriptions = projects_df['description'].tolist()
 project_embeddings = embedder.encode(project_descriptions, convert_to_tensor=True)
+
 
 # ----------------------------------------------------
 # Functions #
@@ -159,36 +157,89 @@ def retrieve_relevant_qas(query, top_n=3):
     
     return retrieved_qas
 
-def retrieve_relevant_projects(query, top_n=3):
+def retrieve_relevant_projects(query, top_n=2, threshold=0.3, boost_tags=True, tag_weight=0.3):
     query_embedding = embedder.encode(query, convert_to_tensor=True)
     similarities = util.cos_sim(query_embedding, project_embeddings)[0]
 
-    top_indices = torch.topk(similarities, k=top_n).indices.tolist()
+    query_lower = query.lower()
+    query_cleaned = re.sub(r"[^\w\s]", "", query_lower)
+    query_words = set(word for word in query_cleaned.split() if word not in stopwords)
+    
+    project_scores = []
 
-    return [project_data[i] for i in top_indices]
+    for idx, sim in enumerate(similarities):
+        score = sim.item()
+        tag_score = 0
+        matched_tags = []
 
-def build_rag_prompt(user_input, n_qas=3, n_projects=3, projects=True):
+        if boost_tags:
+            tags = projects_df.iloc[idx]["tags"]
+            tags_list = [t.strip() for t in tags.split(",") if t.strip()]
+
+            for tag in tags_list:
+                tag_words = set(word for word in tag.lower().split() if word not in stopwords)
+                if query_words & tag_words:
+                    matched_tags.append(tag)
+
+            tag_score = tag_weight * len(matched_tags)
+
+        total_score = score + tag_score
+        project_scores.append((idx, total_score, matched_tags))
+
+    # Sort projects by total score
+    sorted_projects = sorted(project_scores, key=lambda x: x[1], reverse=True)
+
+    # Select top N with sufficient score
+    selected = []
+    for idx, score, matched_tags in sorted_projects:
+        if score >= threshold and len(selected) < top_n:
+            selected.append({
+                "title": projects_df.iloc[idx]["title"],
+                "description": projects_df.iloc[idx]["description"],
+                "tags": projects_df.iloc[idx]["tags"],
+                "matched_tags": matched_tags,
+                "link": projects_df.iloc[idx]["link"],
+                "score": round(score, 3)
+            })
+
+    return selected
+
+def add_projs_to_system_message(query):
+    """
+    Add the project descriptions portion of the system message
+    """
+    projects = retrieve_relevant_projects(query)
+    
+    # If no relevant projects, return
+    if not projects:
+        return None
+    
+    
+    text = "\n\nHere are some relevant projects you can discuss in your answer. Use the project's description and relevancy score to help you answer the question. Be sure to supply the user with the link to the project.\n"
+    for project in projects:
+        text += f"\n[Project: {project['title']}"
+        text += f"\nDescription: {project['description']}"
+        text += f"\nRelevancy Score: {project['score']}"
+        text += f"\nLink: {project['link']}]\n"
+        
+    return text
+        
+def build_rag_prompt(user_input, n_qas=3):
     system_prompt = load_system_prompt()
 
     # Add relevant Q&A examples
     relevant_qas = retrieve_relevant_qas(user_input, top_n=n_qas)
     system_prompt += "\n\nHere are some relevant interview Q&A examples to help guide your answers: {"
     for i, qa in enumerate(relevant_qas):
-        system_prompt += f"\nExample {i + 1}:\nQuestion: {qa['question']}\nAnswer: {qa['answer']}\n"
+        system_prompt += f"\n[Example {i + 1}: \nQuestion: {qa['question']}\nAnswer: {qa['answer']}]\n"
 
     system_prompt += "}"
 
     # Add relevant projects
-    if projects:
-        system_prompt += '\n\nYou can also include links to your projects ONLY WHEN THEY ARE RELEVANT. Use the "Description" column in the table to determine if the project is relevant. DO NOT WRAP THE LINKS IN ANY ADDITIONAL CHARACTERS IN YOUR RESPONSES. Here is the complete list of relevant projects: {'
-
-        relevant_projects = retrieve_relevant_projects(user_input, top_n=n_projects)
-
-        for proj in relevant_projects:
-            system_prompt += f'\nProject {proj["number"]}: {proj["title"]}\nDescription: {proj["description"]}\n'
-
-        system_prompt += "}"
-
+    relevant_projects = add_projs_to_system_message(user_input)
+    if relevant_projects:
+        system_prompt += relevant_projects
+        
     return system_prompt
 
 def summarize_message(content):
@@ -275,7 +326,7 @@ def respond(
         return
     
     # Build a fresh system message using the latest user input
-    system_message = build_rag_prompt(message, projects=True)
+    system_message = build_rag_prompt(message)
 
     # Construct the messages list
     messages = [{"role": "system", "content": system_message}]
