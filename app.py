@@ -333,10 +333,7 @@ def respond(
     for msg in history:
         messages.append(msg)
 
-    messages.append({"role": "user", "content": message})
-    
-    for msg in messages:
-        print(msg["role"] + ": " + msg["content"])
+    messages.append({"role": "user", "content": message}) 
     
     # Tokenize the combined messages
     combined_messages = " ".join([msg["content"] for msg in messages])
@@ -413,6 +410,14 @@ def respond(
             yield f"An error occurred during chat completion: {e}\n Refresh the page and try again."
             raise  # Re-raise the exception after logging
         
+    ### Logging ###
+    print("####################")
+    
+    # print the system message
+    print(f"System Message: {messages[0]['content']}")
+    
+    # print the last message
+    print(f"User Message: {messages[-1]['content']}")
     print(f"response: {response}")
     
     
