@@ -255,7 +255,12 @@ def summarize_message(content):
         max_tokens=200
     )
     
-    return response.choices[0].message.content
+    summary = response.choices[0].message.content
+    
+    print(f"Summarized message: \n{content}\n to \n{summary}")
+    
+    # Return the summarized content
+    return summary
 
 #-------------------------------------------
 # Initialize Hugging Face Client and variables
