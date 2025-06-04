@@ -229,7 +229,7 @@ def build_rag_prompt(user_input, n_qas=3):
 
     # Add relevant Q&A examples
     relevant_qas = retrieve_relevant_qas(user_input, top_n=n_qas)
-    system_prompt += "\n\nHere are some relevant interview Q&A examples to help guide your answers: {"
+    system_prompt += "\n\nHere are some relevant interview Q&A examples to help guide your answers. Use them to inform how you answer and your writing voice: {"
     for i, qa in enumerate(relevant_qas):
         system_prompt += f"\n[Example {i + 1}: \nQuestion: {qa['question']}\nAnswer: {qa['answer']}]\n"
 
