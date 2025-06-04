@@ -26,7 +26,7 @@ You can try out the live demo of the Instant Interview Bot [here.](https://sites
 
 ## Model
 
-This project uses the [google/gemma-3-27b-it](https://huggingface.co/google/gemma-3-27b-it) model, which is a large language model fine-tuned for conversational tasks. The model is capable of generating human-like responses to user queries, making it suitable for use in an interview setting.
+This project uses the [meta-llama/Llama-3.3-70B-Instruct](https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct) model, which is a large language model fine-tuned for conversational tasks. The model is capable of generating human-like responses to user queries, making it suitable for use in an interview setting.
 
 ## Under the Hood
 

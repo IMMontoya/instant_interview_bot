@@ -273,7 +273,7 @@ if huggingface_login is None:
 login(token=huggingface_login, add_to_git_credential=True)
 
 ### Define the Model and client ###
-checkpoint = "google/gemma-3-27b-it"
+checkpoint = "meta-llama/Llama-3.3-70B-Instruct" #"google/gemma-3-27b-it"
 client = InferenceClient(
     checkpoint,
     provider="nebius",
@@ -300,7 +300,7 @@ if context_length is None:
 def respond(
     message,
     history: list[dict],  # chat history
-    max_tokens=256,
+    max_tokens=512,
     temperature=0.7,
     top_p=0.95,
     emergency_stop_threshold=500
