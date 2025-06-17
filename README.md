@@ -51,4 +51,4 @@ The model is capable of maintaining context over a conversation, but it is limit
 
 - Add suggested questions to the UI to help guide the conversation. Cache the answers and/or use the interview_questions_and_answers.csv file to provide answers without using inference tokens.
 - Add voice input support.
-- further develop the RAG system to pull the README files for relevant projects.
+- Further develop the RAG system to pull the README files for relevant projects.
