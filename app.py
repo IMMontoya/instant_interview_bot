@@ -306,7 +306,7 @@ def respond(
     message,
     history: list[dict],  # chat history
     max_tokens=512,
-    temperature=0.7,
+    temperature=0.3,
     top_p=0.95,
     emergency_stop_threshold=500
 ):
